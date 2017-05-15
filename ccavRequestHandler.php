@@ -10,7 +10,7 @@
 
 	error_reporting(0);
 	
-	<?php include 'env.php' ?>
+ include 'env.php';
 	
 	foreach ($_POST as $key => $value){
 		$merchant_data.=$key.'='.$value.'&';

@@ -142,7 +142,7 @@ if($_SESSION['checker']){
 
 	//2.Use app id,secret and redirect url 
 
-	<?php include 'env.php'; ?>
+	 include 'env.php'; 
 
 	$redirect_url='http://natyarambha.com/login.php';
 

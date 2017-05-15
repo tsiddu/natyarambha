@@ -1,0 +1,74 @@
+<div class="row-fluid">
+<div class="span3">
+<?php
+
+if(($task == 'lessons_view') or ($task == 'view_lessons') or ($task == 'lessons_view_topics'))
+{
+	echo '<ul class="nav nav-list well">';
+	$db = getdb();
+	$query_lessons = "SELECT * FROM `lesson`";
+	$result = mysqli_query($db,$query_lessons);
+	while($row=mysqli_fetch_array($result ))
+	{
+		echo '<li class="nav-header">';
+		echo $row['lessons_name'];
+		echo '<li>';
+		
+		$query_lesson = "SELECT * FROM lessons_topic WHERE topic_lesson=".$row['lessons_id'];
+		$result1 = mysqli_query($db,$query_lesson);
+		while($row1=mysqli_fetch_array($result1))
+		{
+			echo '<li>';
+			echo '<a href="?module=learn&task=lessons_view_topics&topic_id='.$row1['topic_id'].'">'.$row1['topic_name'].'</a>';
+			echo '</li>';
+		}
+	}
+	echo '</ul>';
+?>
+		</div>
+		<div class="span1">
+		</div>
+		<?php
+		}
+		else{
+			?>
+			<ul class="nav nav-list well">
+				<li class="nav-header">
+					
+				</li>
+				<?php
+				if($_SESSION['user_access']!='admin'){
+				?>
+				<li >
+					<a href="#">My Saved Workouts</a>
+				</li>
+				<li>
+					<a href="?module=lessons&task=bookmark_lession">Lesson Bookmarks</a>
+				</li>
+				<li>
+					<a href="#">Advanced Search</a>
+				</li>
+				<?php
+				}
+				?>
+				<li class="nav-header">
+					Account Settings
+				</li>
+				<li>
+					<a href="#">Profile</a>
+				</li>
+				<li>
+					<a href="#">Settings</a>
+				</li>
+				<li class="divider">
+				</li>
+				<li>
+					<a href="#">Help</a>
+				</li>
+			</ul>
+		</div>
+		<div class="span1">
+		</div>
+			<?php
+		}
+		?>

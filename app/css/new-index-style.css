@@ -1,0 +1,606 @@
+
+#notSupported{
+	display:none;
+	background-image:url(../img/browser_splashpage.jpg);
+	width: 100%;
+height: 100%;
+background-position: center;
+background-size: cover;
+background-repeat: no-repeat;
+}
+
+/*Home Page*/
+
+		.intro-bg {
+
+			background: white;
+			/*max-height: 1000px;
+			min-height: 700px;*/
+		}
+
+		.quote-author {
+			margin-right: 30%;
+      text-align: right;
+    }
+
+		.art, .girl {
+			float: left;
+			width: 50%;
+		}
+
+		.teaser-img {
+			float: right;
+			width: 50%;
+		}
+
+		.intro-text {
+			z-index: 2;
+		}
+
+		.intro-text p {
+      font-size: .9em;
+      color: white;
+      letter-spacing: .14em;
+      margin: 10px auto;
+    }
+
+    .play:after {
+    	top: 6.2em;
+    }
+
+    .play {
+    	margin-top: 30px;
+    }
+
+
+  		.intro h1 {
+  			font-size: 2.6em;
+  		}
+
+
+  		.mission {
+  			width: 100%;
+  			padding: 75px 0;
+  			background: white;
+  			text-align: center;
+  			position: relative;
+  			z-index: 200;
+  		}
+
+  		.nav-circle {
+				z-index: 1101;
+			}
+
+  		.mission p {
+  			font-family: 'Trocchi', sans-serif;
+  			font-size: 1.1em;
+  			letter-spacing: 0;
+  			color: #3f565e;
+  			line-height: 30px;
+  			width: 930px;
+  			margin: auto;
+  		}
+
+  		.blk {
+  			display: block;
+  		}
+
+
+		/*-----------------                     -------------------- */
+		/*----------------- Section 2  - Content -------------------- */
+		/*-----------------                     -------------------- */
+
+		.teaser {
+			
+			background-size: cover;
+			position: relative;
+			z-index: 333;
+		}
+
+
+		.teaser-box {
+			width: 100%;
+			position: absolute;
+			bottom: 0;
+			left:0;
+		}
+
+		.teaser-text {
+			font-family: 'AlphaRegular', sans-serif;
+			width: 50%;
+			color: white;
+			float: left;
+			position: absolute;
+			bottom: 0;
+			padding: 0 0 5% 5%;
+		}
+
+		.teaser-text h2 {
+			font-size: 1.1em;
+			letter-spacing: 0;
+		}
+
+		.teaser-text p {
+			font-size: .9em;
+			letter-spacing: .1em;
+		}
+
+		.office-mobile, .map-mobile {
+			display: none;
+		}
+
+		.office-box {
+			margin-top: -3px;
+			width: 55%;
+		}
+
+		/*-----------------                     -------------------- */
+		/*----------------- Section 2  - Footer -------------------- */
+		/*-----------------                     -------------------- */
+
+
+
+
+		.location, .contact {
+			float: left;
+			width: 50%;
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			-o-box-sizing: border-box;
+			box-sizing: border-box;
+		}
+
+
+
+		.i-location {
+			display: inline-block;
+			padding-left: 70px;
+			margin-top: 40px;
+			width: 250px;
+			vertical-align: middle;
+		}
+
+		.i-contacts {
+			display: inline-block;
+			margin-top: 21px;
+			width: 250px;
+			padding-left: 70px;
+			vertical-align: middle;
+		}
+
+		.i-copyright {
+			position: absolute;
+			bottom: 25px;
+			font-family: 'Trocchi', sans-serif;
+			font-size: .7em;
+			display: block;
+			margin-top: 60px;
+			width: 350px;
+			padding-left: 70px;
+		}
+
+
+
+
+		.i-location a, .i-contacts a {
+			text-decoration: none;
+			color: #adadac;
+			display: block;
+			margin-top: 10px;
+		}
+
+		.location {
+			padding: 0;
+		}
+
+		.contact {
+			padding: 0;
+		}
+
+		.copyright {
+			font-family: 'Trocchi', serif;
+			font-size: .8em;
+			padding: 0;
+			padding-top: 80px;
+			text-align: left;
+
+		}
+
+		.art-mobile, .boxes-mobile, .clients-mobile {
+				display: none;
+		}
+
+
+		.fillWidth {
+			width: 100%;
+			height: 800px;
+			position: relative;
+			top: 0;
+			left: 0;
+			z-index: 1;
+			background: white;
+
+
+			/*-webkit-transform: translateY(-100px);*/
+
+		}
+
+		video {
+			position: absolute;
+			width: 100%;
+			/*-webkit-transform: translateY(-400px);*/
+
+
+		}
+
+		.overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			background: url(../img/overlay1.png) center repeat;
+			z-index: 1000;
+		}
+
+
+
+		@media screen and (max-width: 1200px) {
+			.i-location, .i-contacts {
+				width: 200px;
+				font-size: .8em;
+				padding-left: 60px;
+			}
+
+			.i-copyright {
+				padding-left: 60px;
+				bottom: 7px;
+			}
+
+
+
+		}
+
+
+		@media screen and (max-width: 1084px) {
+			/*.fillWidth {
+						-webkit-transform: translateY(0);
+						transition: all .3s ease;
+					}
+*/
+		}
+
+		@media screen and (max-width: 1024px) {
+			/*.i-location, .i-contacts {
+				width: 35%;
+			}*/
+
+			.teaser-text {
+				font-size: .8em;
+			}
+
+			.i-location, .i-contacts, .i-copyright {
+
+				padding: 0 0 0 20px;
+			}
+
+			.i-location {
+				margin-top: 25px;
+			}
+
+			.i-contacts {
+				margin-top: 9px;
+			}
+
+			.mission p {
+				width: 96%;
+			}
+
+		}
+
+		@media screen and (max-width: 890px) {
+			video {
+				width: 111.5%;
+			}
+		}
+
+		@media screen and (max-width: 860px) {
+			.teaser-text {
+				font-size: .7em;
+			}
+
+			.i-location {
+				margin-top: 16px;
+				font-size: .6em;
+				width: 150px;
+			}
+
+			.i-contacts {
+				margin-top: 0px;
+				font-size: .7em;
+				width: 150px;
+			}
+		}
+
+				/*Ipads*/
+
+				@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) {
+					.fillWidth, .nav-circle, .intro-text p {
+						display: none;
+					}
+
+					#intro .intro-bg {
+					background: url(../img/intro-head.jpg) center no-repeat;
+					background-size: cover;
+				}
+
+					.play:after {
+					top: 3.45em;
+					}
+
+					.play {
+					margin-top: 20px;
+					}
+
+				}
+				/*----------*/
+
+		@media screen and (max-width: 800px) {
+			.left, .right, .teaser-img {
+				width: 100%;
+				float: left;
+			}
+
+			.fillWidth, .nav-circle, .intro-text p {
+				display: none;
+			}
+
+			.play:after {
+    		top: 3.45em;
+    	}
+
+			.play {
+    	margin-top: 20px;
+    	}
+
+			/*.menu-open {
+				pointer-events: none;
+			}*/
+
+			.white-box h3 {
+				font-size: 1.4em;
+			}
+
+			.white-box p {
+				font-size: 1em;
+				line-height: 25px;
+			}
+
+			.quote {
+				font-size: 1.3em;
+				line-height: 30px;
+				width: 70%;
+				height: 40%;
+			}
+
+			.clients, .office, .idx-map {
+				display: none;
+			}
+
+			.clients-mobile, .office-mobile, .map-mobile {
+				display: block;
+			}
+
+			.mission p {
+				font-size: 1.1em;
+				/*width: 540px;*/
+			}
+
+			.teaser-text {
+				width: 100%;
+				font-size: 1.2em;
+			}
+
+			.footer {
+				height: 300px;
+			}
+
+			.i-location, .i-contacts, .i-copyright {
+				font-size: 1.1em;
+				margin-top: 40px;
+				padding: 0 0 0 40px;
+				width: 100%;
+			}
+
+			.i-copyright {
+				bottom: 30px;
+			}
+
+			#intro .intro-bg {
+
+			background: url(../img/tullamore-intro.jpg) center no-repeat;
+			background-size: cover;
+		}
+
+			.intro-bg {
+				-webkit-transition: none;
+			}
+
+			.mark {
+				margin-left: -30px;
+			}
+		}
+
+
+		@media screen and (max-width: 600px) {
+
+			.white-box p {
+				font-size: .8em;
+				line-height: 19px;
+			}
+
+			.quote {
+				font-size: 1em;
+				line-height: 22px;
+		}
+
+			.mark {
+				margin-left: -23px;
+			}
+		}
+		@media screen and (max-width: 568px) {
+
+			.intro h1 {
+				font-size: 1.8em;
+			}
+
+			.rev, .dew, .art {
+				width: 100%;
+			}
+
+			.intro-text {
+				height: 60px;
+			}
+
+			.play {
+				font-size: 1em;
+				margin-left: -34px;
+			}
+
+			.play:after {
+				position: absolute;
+				height: 30px;
+				width: 30px;
+				top: 2.8em;
+				background-image: url(../img/play-single.png);
+				background-position: center;
+				background-color: rgba(0,0,0,0);
+				background-repeat: no-repeat;
+			}
+
+			.mission p {
+				font-size: 1em;
+				/*width: 80%;*/
+				line-height: 22px;
+
+			}
+
+			.mission {
+				padding: 40px 0;
+			}
+
+			.teaser-text {
+				font-size: .9em;
+			}
+
+
+			.quote {
+				font-size: .9em;
+				width: 60%;
+				height: 30%;
+			}
+			.mark {
+				margin-left: -20px;
+			}
+
+		}
+
+		@media screen and (max-width: 480px) {
+			.quote {
+				height: 200px;
+			}
+
+
+
+			/*.white-box {
+				width: 100%;
+				padding: 2.6em 1em;
+			}
+
+			.white-box h3 {
+				font-size: 1.8em;
+			}
+
+			.white-box p {
+				font-size: .9em;
+				line-height: 20px;
+
+			}*/
+		}
+
+
+		@media screen and (max-width: 420px) {
+
+			.intro h1 {
+				font-size: 1.4em;
+			}
+			.teaser-text p{
+				width: 90%;
+			}
+			.mission p {
+				line-height: 20px;
+				width: 90%;
+				font-size: .9em;
+			}
+
+			.teaser-box {
+				font-size: 1em;
+			}
+
+			.rev, .dew, .art {
+				width: 100%;
+			}
+
+			/*.white-box {
+				width: 100%;
+				padding: 2.6em 1em;
+			}*/
+
+
+
+			.quote {
+				font-size: .7em;
+				line-height: 18px;
+				height: 60%;
+				width: 70%;
+			}
+
+			.mark {
+				margin-left: -17px;
+			}
+
+			.i-contacts, .i-location {
+				font-size: 1em;
+			}
+
+			.i-copyright {
+				font-size: .8em;
+			}
+
+			.office-box {
+			margin-top: 0;
+			width: 100%
+		}
+
+			.play {
+				font-size: .9em;
+				margin: auto;
+				margin-top: 10px;
+			}
+
+			.play:after {
+				right: 42%;
+				margin-top: 25px;
+				/*right: 140px;*/
+				width: 34px;
+				height: 34px;
+			}
+
+		}
+
+		@media screen and (max-width: 320px) {
+			.quot img {
+				height: 330px;
+			}
+		}
+

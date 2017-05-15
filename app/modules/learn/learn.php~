@@ -1,0 +1,399 @@
+<?php
+
+function learn_view_lessons()
+{
+?>
+<!--Sorry About the Heavy CSS But its neaded for the components make it external for quicker load time :) -->
+<style>
+.pricing-table .plan {
+  border-radius: 5px;
+  text-align: center;
+  background-color: #f3f3f3;
+  -moz-box-shadow: 0 0 6px 2px #b0b2ab;
+  -webkit-box-shadow: 0 0 6px 2px #b0b2ab;
+  box-shadow: 0 0 6px 2px #b0b2ab;
+}
+ 
+ .plan:hover {
+  background-color: #fff;
+  -moz-box-shadow: 0 0 12px 3px #b0b2ab;
+  -webkit-box-shadow: 0 0 12px 3px #b0b2ab;
+  box-shadow: 0 0 12px 3px #b0b2ab;
+}
+ 
+ .plan {
+  padding: 20px;
+  color: #ff;
+  background-color: #5e5f59;
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
+}
+  
+.plan-name-bronze {
+  padding: 20px;
+  color: #fff;
+  background-color: #665D1E;
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
+ }
+  
+.plan-name-silver {
+  padding: 20px;
+  color: #fff;
+  background-color: #C0C0C0;
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
+ }
+  
+.plan-name-gold {
+  padding: 20px;
+  color: #fff;
+  background-color: #FFD700;
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
+  } 
+  
+.pricing-table-bronze  {
+  padding: 20px;
+  color: #fff;
+  background-color: #f89406;
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
+}
+  
+.pricing-table .plan .plan-name span {
+  font-size: 20px;
+}
+ 
+.pricing-table .plan ul {
+  list-style: none;
+  margin: 0;
+  -moz-border-radius: 0 0 5px 5px;
+  -webkit-border-radius: 0 0 5px 5px;
+  border-radius: 0 0 5px 5px;
+}
+ 
+.pricing-table .plan ul li.plan-feature {
+  padding: 15px 10px;
+  border-top: 1px solid #c5c8c0;
+}
+ 
+.pricing-three-column {
+  margin: 0 auto;
+  //width: 80%;
+  float:left;
+  padding: 10px;
+width: 300px;
+}
+ 
+.pricing-variable-height .plan {
+  float: none;
+  margin-left: 2%;
+  vertical-align: bottom;
+  display: inline-block;
+  zoom:1;
+  *display:inline;
+}
+ 
+.plan-mouseover .plan-name {
+  background-color: #4e9a06 !important;
+}
+ 
+.btn-plan-select {
+  padding: 8px 25px;
+  font-size: 18px;
+}
+</style>
+ 
+ <?php
+ 
+ $db = getdb();
+ $select_lessons = "SELECT * FROM lesson";
+ $query_result = mysqli_query($db,$select_lessons);
+ $i = 3;
+ ?>
+	<div class='span9'>
+	<?php
+	while($row=mysqli_fetch_array($query_result))
+	{
+		?>
+		<div class="row pricing-table pricing-three-column"> 
+			<div class=" plan">
+			  <div class="plan-name-bronze">
+				<h2><?php echo $row['lessons_name'];?></h2>
+			  </div>
+			  <ul>
+				<li class="plan-feature"><?php echo $row['lesson_description'];?></li>  
+				<li class="plan-feature"><a href="?module=learn&task=lessons_view&lessons_id=<?php  echo $row['lessons_id']; ?>" class="btn btn-primary btn-plan-select"><i class="icon-white icon-ok"></i> Choose this Lesson</a></li>
+			  </ul>
+			</div>
+		</div>
+	<?php
+	}
+	?>
+	</div>
+<?php	
+}
+
+
+function learn_lessons_view()
+{
+	if(isset($_GET['lessons_id']))
+	{
+		$lessons_id = $_GET['lessons_id'];
+		$db = getdb();
+		$query_lessons = "SELECT * FROM `lesson` where lessons_id=".$lessons_id;
+		$result = mysqli_query($db,$query_lessons);
+		$row = mysqli_fetch_array($result);	
+		$query_forget_bookmark_count = "SELECT count(*) as count_val FROM `user_favrits` WHERE Category='lessons' and type_id='$lessons_id'";
+		$result_bookmark = mysqli_query($db,$query_forget_bookmark_count);
+		$row_count = mysqli_fetch_array($result_bookmark);
+		$bookmarkCount = $row_count['count_val'];
+			echo '<div class="row-fluid">';
+			echo '<div class="span8">';
+			echo '<h3>';
+			echo $row['lessons_name'];
+			echo '</h3>';
+			echo '<p>';
+			echo $row['lesson_description'];
+			echo '</p>';
+			if($bookmarkCount == 0) {
+				echo "<a href='?module=learn&task=add_to_bookmark&lession_id=".$lessons_id."' style='float:right;'>add to bookmarks</a>";
+			}
+			else {
+				echo "<a href='?module=learn&task=remove_bookmark&lession_id=".$lessons_id."' style='float:right;'>remove from bookmarks</a>";
+			}
+			echo '<hr>';
+			echo '<span>lesson topics</span>';
+			$query_lesson = "SELECT * FROM lessons_topic WHERE topic_lesson=".$row['lessons_id'];
+			$result1 = mysqli_query($db,$query_lesson);
+			while($row1=mysqli_fetch_array($result1 ))
+			{
+				echo '<li>';
+				echo '<a href="?module=learn&task=lessons_view_topics&topic_id='.$row1['topic_id'].'">'.$row1['topic_name'].'</a>';
+				echo '</li>';
+			}
+			echo '</div>';
+			echo '</div>';
+	}
+	else{
+		echo "sorry no row selected";
+	}
+}
+
+
+/////////////////////////////////////////////////////////////////////
+//////////////////////----------------------------------------------
+function learn_lessons_view_topics()
+{
+	if(isset($_GET['topic_id']))
+	{
+		$topic_id = $_GET['topic_id'];
+		$db = getdb();
+		$query = "SELECT s.`t_v_id`,s.`description`,c.`video_name`,c.`video_id`, c.video_path,c.video_thumb_path,c.Desctiption FROM `topic_videos` s, videos c where s.`Vides_id` = c.video_id and `topic_id`=".$topic_id;
+		$result = mysqli_query($db,$query);
+	?>
+	<div class="row-fluid">
+	<div class='span8'>
+	<?php
+	//	while($row = mysqli_fetch_array($result))
+	//	{
+		//	echo '<h3>'.$row['video_name'].'</h3>';
+		//	echo 	'<video width="320" height="240" controls>  <source src="'.$row['video_path'].'" type="video/mp4"></video>';
+	//		echo '</br>';
+		//	echo '<u><b>Description</u></b></br>';
+			//echo $row['description'];
+	//	}
+	?>
+	<?php
+  // $con=mysqli_connect("localhost","root","","video");
+  // $video_data = mysqli_query($db,"SELECT * FROM videos");
+// video playlist data 
+while($row = mysqli_fetch_array($result,MYSQLI_ASSOC))
+  {
+  //cue points
+  $cuepoints='';
+	  $select_query="SELECT * FROM videos_q_points where video_id='".$row['video_id']."'";
+	  $cuepoint_data = mysqli_query($db,$select_query);
+//	  echo $select_query;
+	  while($cue_row = mysqli_fetch_array($cuepoint_data))
+	  {
+		$cuepoints .= round($cue_row["q_point_value"],2).",";
+		$cue_desc[] = array('point'=>round($cue_row["q_point_value"],2),'desc'=>$cue_row["q_point_description"]);
+	  }
+		$cuepoints = substr($cuepoints,0,-1);
+
+	  //total video data
+	 $video_full_data[]= array('id'=> $row['video_id'],
+	  'video_name' =>$row['video_name'],
+	  'video_path' => $row['video_path'],
+	  'video_thumb' =>$row['video_thumb_path'],
+	  'cuepoints'=>$cuepoints
+	  );
+	  
+  }
+  //var_dump($cue_desc);
+  //var_dump($video_full_data);
+$cue_encode_data=array_merge($video_full_data,$cue_desc);
+//var_dump($cue_encode_data);
+	  $cue=json_encode($cue_encode_data);
+	  $cuevid=json_encode($video_full_data);
+	  $cuepts=json_encode($cue_desc);
+?>
+   <!-- player skin -->
+   <link rel="stylesheet" type="text/css" href="skin/minimalist.css">
+   <!-- site specific styling -->
+   <style type="text/css">
+   /* site specific styling */
+
+   /* custom player skin */
+   #jsplaylist { width: 80%; background-color: #222; background-size: cover; max-width: 800px; }
+   #jsplaylist .fp-controls { background-color: rgba(247, 244, 244, 0)}
+   #jsplaylist .fp-timeline { background-color: rgba(0, 0, 0, 0.5)}
+   #jsplaylist .fp-progress { background-color: rgba(15, 117, 52, 1)}
+   #jsplaylist .fp-buffer { background-color: rgba(249, 249, 249, 1)}
+   .last-video.is-finished {
+   / do your marketing magic /
+   { background-color: red}
+}
+
+   </style>
+  <!-- flowplayer depends on jQuery 1.7.1+ (for now) -->
+   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+   <!-- include flowplayer -->
+   <script type="text/javascript" src="flowplayer.min.js"></script>
+   <!--<script type="text/javascript" src="flowplayer-3.2.12.min.js"></script>-->
+   
+   <script>
+   /* flowplayer(function (api, root) {
+ 
+  api.bind("load", function () {
+ 
+    // do something when a new video is about to be loaded
+ 
+  }).bind("ready", function () {
+     // do something when a video is loaded and ready to play
+ 
+  });
+ 
+}); */
+   // run script after document is ready
+$(function () {
+var i=0;
+//$("#jsplaylist").flowplayer();
+var cuecnt=-1;
+$(".flowplayer").bind("cuepoint", function(e, api, cuepoint) {
+ cuecnt=cuecnt+1;
+   var points= <?php echo $cuevid;?>;
+   var cues= <?php echo $cuepts;?>;
+ for(i=0;i<points.length;i++){
+ var pnts=points[i]['cuepoints'].split(',')
+ for(k=0;k<pnts.length;k++){
+ if(pnts[k]==cuepoint.time){
+ if(cues[cuecnt]['point']==cuepoint.time){
+ $('#content').html(cues[cuecnt]['desc']);
+ }
+ }
+ }
+ }
+});
+});
+   </script>
+   <!-- the player -->
+<link rel="stylesheet" href="js/jquery.checkbox.css" />
+		<link rel="stylesheet" href="js/jquery.safari-checkbox.css" />
+		<script type="text/javascript" src="js/jquery.checkbox.js"></script><div style="width:100%">
+
+
+<script>
+$(document).ready( function () {
+				$('input:checkbox:not([safari])').checkbox();
+});
+
+function toggleaudio(){
+var isChecked = $('#checkOne:checked').val()?true:false;
+if(isChecked==true){
+$('video').css('display','none');
+$('.flowplayer').css('height','40px');
+}else{
+$('video').css('display','block');
+$('.flowplayer').css('height','400px');
+
+}
+}
+</script>
+Audio Mode: <input type="checkbox" id="checkOne" onclick="toggleaudio();" /><br/><hr/>
+
+<div class="flowplayer no-toggle play-button" style="width:500px;height:400px;background-color: #000;
+border-radius: 10px;
+border: 1px solid #CCC;"  data-embed="false" >
+   <video>
+   <?php
+   foreach($video_full_data as $row_data)
+	  {
+		echo '<source type="video/mp4" src="'.$row_data["video_path"].'">';
+		break;
+	  }
+   ?>
+    </video>
+
+ 
+<!-- Video Thumbnails-->
+<div class="fp-playlist">
+ <?php 
+	  foreach($video_full_data as $list_data)
+	  {
+		echo '<a href="http://test.schemax.in/natyam/app/'.$list_data["video_path"].'" data-cuepoints="['.$list_data["cuepoints"].']"><img width="30px" src="'.$list_data["video_thumb"].'">'.$list_data["video_name"].'</a><br>';
+		
+	  }
+	  ?>
+	  </div>
+</div>
+
+<div style="clear:both"></div>
+
+</div>
+<style>
+.fp-playlist{
+width: 200px;
+margin-left: 530px;
+}
+</style>
+<div id="content">test tests</div>
+	</div>
+	</div>
+	<?php
+	}
+}
+
+
+function learn_add_to_bookmark()
+{
+	if(isset($_GET['lession_id'])) {
+		$db = getdb();
+		$lessons_id = $_GET['lession_id'];
+		$user_id = $_SESSION['User_id'];
+		$query = "INSERT INTO `user_favrits`(`Category`, `userID`, `type_id`, `viewDate`) VALUES ('Lessons','$user_id','$lessons_id',now())";
+		$result = mysqli_query($db,$query);
+		if($result == true) {
+			echo "<script>window.location = 'index.php?module=learn&task=lessons_view&lessons_id=".$lessons_id."';</script>";
+		}
+		else {
+			echo "<script>alert('please select lesson')</script>";
+			echo "<script>window.location = 'index.php?module=learn&task=view_lessons';</script>";
+		}
+	}
+}
+
+function learn_view_bookmarks() {
+
+}
+
+function learn_remove_bookmark() {
+}
+?>

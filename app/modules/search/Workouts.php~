@@ -1,0 +1,890 @@
+<?php
+
+function Workouts_view()
+{
+?>
+				<div class="span9" style='border: 1px solid rgb(247, 247, 247);background-color: rgb(241, 241, 241);box-shadow: 0px 0px 2px 1px silver;'>
+					<?php
+					if($_SESSION['user_access'] == "admin")
+					{
+					?>
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a href="?module=Workouts&task=view">Workouts</a>
+						</li>
+					</ul>
+					<div>
+						<a class='btn' href="?module=Workouts&task=Create">Create Workout</a>
+						</br>
+						<!-- list of workouts -->
+						<?php
+							$db = getdb();
+							$query = "select s.WorkoutId,s.Name,c.Username,s.Access,s.Description,s.WorkoutDuration from workouts as s,users as c where s.CreatedBy = c.user_id";
+							$result = mysqli_query($db,$query);
+							//print_r($result);
+								?>
+								<table class="table table-hover table-bordered">
+								<thead>
+									<tr>
+									<th>
+									Name
+									</th>
+									<th>
+									Created By
+									</th>
+									<th>
+									Access
+									</th>
+									<th>
+									View
+									</th>
+									<th>
+									Duration
+									</th>
+									<th>
+									Add Videos
+									</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?php
+							while($row = mysqli_fetch_array($result))
+							{
+								?>
+								<tr>
+									<td><?php	echo $row['Name']; ?></td>
+									<td><?php	echo $row['Username']; ?></td>
+									<td><?php	echo $row['Access']; ?></td>
+									<td><?php	echo $row['WorkoutDuration']; ?></td>
+									<td><a class='btn' href='?module=Workouts&task=view_byid&jobID=<?php echo $row['WorkoutId'];?>'>View</a></td>
+									<td><a class='btn' href='?module=Workouts&task=view_byid&jobID=<?php echo $row['WorkoutId'];?>'>Add video</a></td>
+								</tr>
+								<?php
+							}
+						?>
+						</tbody>
+						</table>
+					</div>
+					<?php
+					}
+					else
+					{
+					?>
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a href="?module=Workouts&task=view">All Workouts</a>
+						</li>
+						<li>
+							<a href="?module=Workouts&task=Myworkouts">My Workouts</a>
+						</li>
+						<li>
+							<a href="?module=Workouts&task=my_activities">My Activities</a>
+						</li>
+						<div class="btn-group" style="float:right">
+ 							 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+   							 Action
+    							<span class="caret"></span>
+ 							 </a>
+ 							 <ul class="dropdown-menu">
+  								  <!-- dropdown menu links -->
+  							  <li>
+  							  <a href="?module=Workouts&task=Create">Creat</a>
+  							  </li>
+  							  <li>
+  							  <a href="?module=Workouts&task=user_own_workouts">Add Videos to WO</a>
+  							  </li>
+ 							 </ul>
+						</div>
+					</ul>
+					<div>
+					<?php
+						$User_id = $_SESSION['User_id'];
+						$db = getdb();
+						$select_publick_workouts = "select s.WorkoutId,s.Name,c.Username,s.Access,s.Description,s.WorkoutDuration from workouts as s,users as c where s.CreatedBy = c.user_id and (`Access`='public' or `CreatedBy` in(7,$User_id))";
+						$publick_workouts = mysqli_query($db,$select_publick_workouts);
+						while($row2 = mysqli_fetch_array($publick_workouts))
+						{
+							//print_r($row2);
+							?>
+							<div style='width:220px;height:180px;border:1px solid silver;float:left;margin:30px;'>
+							<div style='width:220px;height:180px;' >
+							<?php
+							$workout  = $row2['WorkoutId'];
+							$getvideos = "SELECT s.VideoID,c.video_thumb_path FROM `workoutvedios` as s,videos as c WHERE WorkoutID =
+										$workout and	c.video_id=s.VideoID limit 4";
+							//echo $getvideos;
+							$result_videos_workout = mysqli_query($db,$getvideos);
+							//echo $getvideos;
+							while($row_videos = mysqli_fetch_array($result_videos_workout))
+							{
+								echo "<img src='".$row_videos['video_thumb_path']."'  border='1' style='width:80px;height:80px;border:1px solid silver' >";
+							}
+							
+							echo "</div>";
+							$workoutid_for_play = $row2['WorkoutId'];
+							//echo "<a style='float:left;text-decoration:none;cursor:pointer;'>Play</a>";
+							?>
+							<a href = '?module=Workouts&task=play_workout&wrkoutid=<?php echo $workoutid_for_play;?>' 
+									style='float:left;text-decoration:none;cursor:pointer;'>Play</a>
+							<div class='span9' style='float:right;'>
+								<ul class="nav navbar-nav navbar-right">
+									<li class="dropdown" style='text-align: right;margin:2px;'>
+										<a href="#" class="dropdown-toggle" data-toggle="dropdown" style='font-size:20px;'><b>....</b><strong class="caret"></strong></a>
+										<ul class="dropdown-menu">
+											<li>
+												<a href="#">Share</a>
+											</li>	
+											<li>
+												<a href="?module=Workouts&task=add_user_fav_wk&jobID=<?php echo $row2['WorkoutId'];?>">Add to my workouts</a>
+											</li>
+											<li>
+												<a href="?module=Workouts&task=search&workoutid=<?php echo $row2['WorkoutId'];?>">Search Similar</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<?php
+							echo "</div>";
+						}
+					?>
+					</div>
+					<?php
+					}
+					?>
+				</div>
+<?php
+}
+
+function Workouts_recommended()
+{
+echo "recommended function";
+}
+
+function Workouts_all()
+{
+echo "all workout function";
+}
+
+function Workouts_Create()
+{
+	//echo "creating workout";
+	?>
+	<div class="span9" style='border: 1px solid rgb(247, 247, 247);background-color: rgb(241, 241, 241);box-shadow: 0px 0px 2px 1px silver;'>
+		<form class="form-horizontal" method="post" action="?module=Workouts&task=add_worout">
+			<fieldset>
+
+			<!-- Form Name -->
+			<legend>Form Name</legend>
+
+			<!-- Text input-->
+			<div class="control-group">
+			  <label class="control-label" for="Name">Workout Name</label>
+			  <div class="controls">
+				<input id="Name" name="Name" type="text" placeholder="" class="input-xlarge" required="">
+				
+			  </div>
+			</div>
+
+			<!-- Textarea -->
+			<div class="control-group">
+			  <label class="control-label" for="Description">Description</label>
+			  <div class="controls">                     
+				<textarea id="Description" name="Description"></textarea>
+			  </div>
+			</div>
+
+			<!-- Select Basic -->
+			<div class="control-group">
+			  <label class="control-label" for="acccess">Access</label>
+			  <div class="controls">
+				<select id="acccess" name="acccess" class="input-xlarge">
+				  <option value = 'Private'>Private</option>
+				  <option value = 'Public'>Public</option>
+				</select>
+			  </div>
+			</div>
+
+			<!-- Text input-->
+			<div class="control-group">
+			  <label class="control-label" for="Tags">Tags</label>
+			  <div class="controls">
+				<input id="Tags" name="Tags" type="text" placeholder="ex: step1,hard,lastLevel" class="input-xlarge" required="">
+			  </div>
+			</div>
+			
+			<!-- Button -->
+			<div class="control-group">
+			  <label class="control-label" for="Save"></label>
+			  <div class="controls">
+				<button id="Save" name="Save" class="btn btn-success">Save</button>
+			  </div>
+			</div>
+
+			</fieldset>
+		</form>
+	</div>
+	<?php
+}
+
+function Workouts_add_worout()
+{
+
+	if(isset($_POST['Name']))
+	{
+		$name = $_POST['Name'];
+		$description = $_POST['Description'];
+		$access = $_POST['acccess'];
+		$Tags = $_POST['Tags'];
+		$userName = $_SESSION['User_id'];
+		//echo "ok";
+		$query = "INSERT INTO `workouts`(`Name`, `CreatedBy`, `Access`, `Description`, WorkoutDuration,tags) 
+				VALUES ('$name','$userName','$access','$description',0,$Tags)";
+		$db = getdb();
+		
+		echo $query;
+		$result = mysqli_query($db,$query);
+		if($result == true)
+		{
+			$queryGetId = "SELECT `WorkoutId` FROM `workouts` order by `WorkoutId` desc limit 1";
+			$result = mysqli_query($db,$queryGetId);
+			$row = mysqli_fetch_array($result);
+			$idvalue =  $row['WorkoutId'];
+			echo "<script>window.location = '?module=Workouts&task=view_byid&jobID=$idvalue';</script>";
+		}
+		else
+		{
+			echo "Not added";
+		}
+	}
+	else
+	{
+		echo "<script>window.location = '?module=Workouts&task=Create';</script>";
+	}
+}
+
+
+function Workouts_view_byid()
+{
+	if(isset($_GET['jobID']))
+	{
+		$idvalue = $_GET['jobID'];
+		
+		$db = getdb();
+		$query = "SELECT * FROM `workouts` where WorkoutId = $idvalue";
+		$result = mysqli_query($db,$query);
+		//print_r($result);
+		while($row = mysqli_fetch_array($result))
+		{
+			//echo $row['WorkoutId'];
+			?>
+			<script>
+			
+			function change_elements()
+			{
+				$('#name').prop("disabled",false);
+				$('#Access').prop("disabled",false);
+				$('#Description').prop("disabled",false);
+				$('#Tags').prop("disabled",false);
+				$('#save').show();
+				$('#cancel').show();
+				$('#edit').hide();
+			}
+			
+			function chaneg_forcancel()
+			{
+				$('#name').prop("disabled",true);
+				$('#Access').prop("disabled",true);
+				$('#Description').prop("disabled",true);
+				$('#Tags').prop("disabled",true);
+				$('#save').hide();
+				$('#cancel').hide();
+				$('#edit').show();
+			}
+			</script>
+			<div class='span9' style='border: 1px solid rgb(247, 247, 247);background-color: rgb(241, 241, 241);box-shadow: 0px 0px 2px 1px silver;'>
+				<form action='?module=Workouts&task=update&id=<?php echo $idvalue; ?>' method='post'>
+				<label>Name:</label><input type='text' name='Name' id='name' value ='<?php echo $row['Name']; ?>' class='span4' disabled>
+				<label>Access:</label>  <select name='Access' class='span4'  id='Access' disabled>
+										<option value="Private" <?php if($row['Access'] == "Private"){echo "selected";} ?>>Private</option>
+										<option value="Public" <?php if($row['Access'] == "Public"){echo "selected";} ?>>Public</option>
+										</select>
+				<label>Description:</label><textarea class='span4' rows='5' id='Description' name = 'Description' disabled><?php echo$row['Description']; ?></textarea>
+				<label>Tags:</label><input type='text' name='Tags' id='Tags' value ='<?php echo $row['tags']; ?>' class='span4' disabled>
+				</br>
+				<input type='button' value = 'Edit' id='edit'  name ='Edit' class='btn' onClick='change_elements()'>		
+				<input type='submit' value = 'Save' id='save' name ='Save' class='btn' style='display:none'>		
+				<input type='reset' value = 'Cancel'  id='cancel' name ='Cancel' class='btn' onclick="chaneg_forcancel()" style='display:none'>		
+				</form>
+				
+			<a id="modal-759260" href="#modal-container-759260" role="button" class="btn" data-toggle="modal">Add Video</a>
+			
+			<div class="modal fade" id="modal-container-759260" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+							<h4 class="modal-title" id="myModalLabel">
+								Videos
+							</h4>
+						</div>
+						<div class="modal-body">
+						<?php
+						}
+							$getVideos = "SELECT * FROM videos";
+							$resut_vodeos = mysqli_query($db,$getVideos);
+							while($row = mysqli_fetch_array($resut_vodeos))
+							{
+								//print_r($row);
+								?>
+								<a href="?module=Workouts&task=Add_video&wkid=<?php echo $idvalue; ?>&vdid=<?php echo $row['video_id']; ?>">
+								<div style="width:180px;height:120px;border:1px solid silver;margin:10px;float:left;background-image:url('<?php echo $row['video_thumb_path'];?>');background-size: 100%;">
+								</div>
+								</a>
+								<?php
+							}
+						?>
+						</div>
+						<div class="modal-footer">
+							 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			</br>
+			<?php
+			$getVideos = "SELECT * FROM `videos` WHERE video_id in (SELECT `VideoID` FROM `workoutvedios` WHERE WorkoutID=$idvalue)";
+							$resut_vodeos1 = mysqli_query($db,$getVideos);
+							while($row = mysqli_fetch_array($resut_vodeos1))
+							{
+								//print_r($row);
+								?>
+								<div style="width:180px;height:120px;border:1px solid silver;margin:10px;float:left;background-image:url('<?php echo $row['video_thumb_path'];?>');background-size: 100%;">
+								<a href="?module=Workouts&task=deled_video_wk&wkid=<?php echo $idvalue; ?>&vdid=<?php echo $row['video_id']; ?>"> Remove</a>
+								</div>
+								<?php
+							}
+			?>
+		</div>
+		<?php
+	}
+}
+
+
+function Workouts_Add_video()
+{
+	if(isset($_GET['wkid']) and  isset($_GET['vdid']))
+	{
+		$db = getdb();
+		$wkid = $_GET['wkid'];
+		$vdid = $_GET['vdid'];
+		$query = "INSERT INTO `workoutvedios`(`WorkoutID`, `VideoID`) VALUES ($wkid,$vdid)";
+		$result = mysqli_query($db,$query);
+		if($result == true)
+		{
+			echo "ok";
+			$query_insert = "update workouts set WorkoutDuration =  (SELECT sum(video_duration) from videos where video_id  in (select VideoID from workoutvedios where WorkoutID = $wkid)) where WorkoutId = $wkid";
+			$resuitfordusration = mysqli_query($db,$query_insert);
+			if($resuitfordusration==true)
+			{
+				echo "duration also updated";
+				echo "<script>window.location = '?module=Workouts&task=view_byid&jobID=$wkid';</script>";
+			}
+		}
+	}
+}	
+
+
+
+function Workouts_deled_video_wk()
+{
+	if(isset($_GET['wkid']) and  isset($_GET['vdid']))
+	{
+		$db  = getdb();
+		$wkid = $_GET['wkid'];
+		$vdid = $_GET['vdid'];
+		$delete_query = "DELETE FROM `workoutvedios` WHERE `WorkoutID`=$wkid and `VideoID`=$vdid";
+		$result = mysqli_query($db,$delete_query);
+		if($result == true)
+		{
+			echo "<script>alert('Video Removed form Workout');</script>";
+			echo "<script>window.location = '?module=Workouts&task=view_byid&jobID=$wkid';</script>";
+		}
+	}
+}
+
+
+function Workouts_add_user_fav_wk()
+{
+	if(isset($_GET['jobID']))
+	{
+		//echo "ok";
+		$db = getdb();
+		$id = $_GET['jobID'];
+		$category = "Workout";
+		$User_id = $_SESSION['User_id'];
+		$insertquery = "INSERT INTO `user_favrits`( `Category`, `userID`, `type_id`) VALUES ('$category','$User_id','$id')";
+		$result = mysqli_query($db,$insertquery);
+		if($result == true)
+		{
+			echo "<script>window.location = '?module=Workouts&task=view';</script>";
+		}
+		else
+		{
+			echo "<script>alert('Already Workout added');</script>";
+			echo "<script>window.location = '?module=Workouts&task=view';</script>";
+		}
+	}
+}
+
+
+function Workouts_update()
+{
+	if(isset($_GET['id']))
+	{
+		$id =  $_GET['id'];
+		$Name = $_POST['Name'];
+		$Access = $_POST['Access'];
+		$User_id = $_SESSION['User_id'];
+		$Description = $_POST['Description'];
+		$Tags = $_POST['Tags'];
+		$db = getdb();
+		$update = "UPDATE `workouts` SET `Name`='$Name',`CreatedBy`='$User_id',`Access`='$Access',`Description`='$Description',
+					`tags`='$Tags' WHERE WorkoutId='$id'";
+		echo $update;
+		$result = mysqli_query($db,$update);
+		if($result == true)
+		{
+			echo "<script>window.location = '?module=Workouts&task=view_byid&jobID=$id';</script>";
+		}
+		else{
+			echo "<script>alert('not updated');</script>";
+			echo "<script>window.location = '?module=Workouts&task=view_byid&jobID=$id';</script>";
+		}
+	}
+}
+
+
+function Workouts_search()
+{
+	if(isset($_GET['workoutid']))
+	{
+		$db = getdb();
+		$id = $_GET['workoutid'];
+		$User_id = $_SESSION['User_id'];
+		//echo $id;
+		$query_search = "SELECT * FROM `workouts` WHERE `WorkoutId` = '$id'";
+		//echo $query_search;
+		$result = mysqli_query($db,$query_search);
+		$row = mysqli_fetch_array($result);
+		$tags = $row['tags'];
+		$select_publick_workouts = "select s.WorkoutId,s.Name,c.Username,s.Access,s.Description,s.WorkoutDuration,s.tags from workouts as s,users as c where s.CreatedBy = c.user_id and (`Access`='public' or `CreatedBy` in(7,$User_id)) ";
+		$tags1 = explode(",", $tags);
+		$nooftages = count($tags1);
+		$i = 0;
+		while($i<$nooftages)
+		{
+			if($i == 0)
+			{
+				$select_publick_workouts = $select_publick_workouts . "and (";
+			}
+			$select_publick_workouts  = $select_publick_workouts."s.tags like '%".$tags1[$i]."%'";
+			//echo $tags1[$i];
+			$i = $i + 1;
+			if($i < $nooftages)
+			{
+				$select_publick_workouts  = $select_publick_workouts . " or ";
+			}
+		}
+		$select_publick_workouts = $select_publick_workouts.")";
+		//echo $select_publick_workouts;
+	}
+	if(isset($_POST['search_value']))
+	{
+		$User_id = $_SESSION['User_id'];
+		$tags = $_POST['search_value'];
+		//echo $tags;
+		$select_publick_workouts = "select s.WorkoutId,s.Name,c.Username,s.Access,s.Description,s.WorkoutDuration,s.tags from workouts as s,users as c where s.CreatedBy = c.user_id and (`Access`='public' or `CreatedBy` in(7,$User_id)) ";
+		$tags1 = explode(" ", $tags);
+		
+		//echo $select_publick_workouts;
+		$nooftages = count($tags1);
+		//echo $nooftages;
+		$i = 0;
+		while($i < $nooftages)
+		{
+			if($i == 0)
+			{
+				$select_publick_workouts = $select_publick_workouts . "and (";
+			}
+			$select_publick_workouts  = $select_publick_workouts."s.tags like '%".$tags1[$i]."%'";
+			//echo $tags1[$i];
+			$i = $i + 1;
+			if($i < $nooftages)
+			{
+				$select_publick_workouts  = $select_publick_workouts . " or ";
+			}
+		}
+		$select_publick_workouts = $select_publick_workouts.")";
+		//echo $select_publick_workouts;
+	}
+	?>
+					<div class='span9'>
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a href="#">Search</a>
+						</li>
+					</ul>
+					<div>
+					<?php
+						$publick_workouts = mysqli_query($db,$select_publick_workouts);
+						//Print_r($publick_workouts); 
+						while($row2 = mysqli_fetch_array($publick_workouts))
+						{
+							//print_r($row2);
+							?>
+							<div style='width:220px;height:180px;border:1px solid silver;float:left;margin:30px;'>
+							<div style='width:220px;height:180px;' >
+							<?php
+							$workout  = $row2['WorkoutId'];
+							$getvideos = "SELECT s.VideoID,c.video_thumb_path FROM `workoutvedios` as s,videos as c WHERE WorkoutID =
+										$workout and	c.video_id=s.VideoID limit 4";
+							//echo $getvideos;
+							$result_videos_workout = mysqli_query($db,$getvideos);
+							//echo $getvideos;
+							while($row_videos = mysqli_fetch_array($result_videos_workout))
+							{
+								echo "<img src='".$row_videos['video_thumb_path']."'  border='1' style='width:80px;height:80px;border:1px solid silver' >";
+							}
+							
+							echo "</div>";
+							$workoutid_for_play = $row2['WorkoutId'];
+							//echo "<a style='float:left;text-decoration:none;cursor:pointer;'>Play</a>";
+							?>
+							<a href = '?module=Workouts&task=play_workout&wrkoutid=<?php echo $workoutid_for_play;?>' 
+									style='float:left;text-decoration:none;cursor:pointer;'>Play</a>
+							<div class='span9' style='float:right'>
+								<ul class="nav navbar-nav navbar-right">
+									<li class="dropdown" style='text-align: right;margin:2px;'>
+										<a href="#" class="dropdown-toggle" data-toggle="dropdown" style='font-size:20px'><b>....</b><strong class="caret"></strong></a>
+										<ul class="dropdown-menu">
+											<li>
+												<a href="#">Share</a>
+											</li>	
+											<li>
+												<a href="?module=Workouts&task=add_user_fav_wk&jobID=<?php echo $row2['WorkoutId'];?>">Add to my workouts</a>
+											</li>
+											<li>
+												<a href="?module=Workouts&task=search&workoutid=<?php echo $row2['WorkoutId'];?>">Search Similar</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+						</div>
+					<?php
+						}
+					?>
+					</div>
+					</div>
+	<?php
+}
+
+
+
+function Workouts_Myworkouts()
+{
+?>
+	<div class="span9" style='border: 1px solid rgb(247, 247, 247);background-color: rgb(241, 241, 241);box-shadow: 0px 0px 2px 1px silver;'>
+		<ul class="nav nav-tabs">
+			<li >
+				<a href="?module=Workouts&task=view">All Workouts</a>
+			</li>
+			<li class="active">
+				<a href="?module=Workouts&task=Myworkouts">My Workouts</a>
+			</li>
+			<li>
+				<a href="?module=Workouts&task=my_activities">My Activities</a>
+			</li>
+			<div class="btn-group" style="float:right">
+ 				 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+   				 Action
+    				<span class="caret"></span>
+ 				 </a>
+ 				 <ul class="dropdown-menu">
+  				  <!-- dropdown menu links -->
+  				  <li>
+  				  <a href="?module=Workouts&task=Create">Creat</a>
+  				  </li>
+  				  <li>
+  				  <a href="?module=Workouts&task=user_own_workouts">Add Videos to WO</a>
+  				  </li>
+ 				 </ul>
+			</div>
+		</ul>
+		<div>
+		<?php
+			$User_id = $_SESSION['User_id'];
+			$db = getdb();
+			$select_publick_workouts = "select s.WorkoutId,s.Name,c.Username,s.Access,s.Description,s.WorkoutDuration from workouts as s,users as c where s.CreatedBy = c.user_id and s.WorkoutId in (SELECT type_id FROM `user_favrits` where Category='workout' and userId = $User_id)";
+			$publick_workouts = mysqli_query($db,$select_publick_workouts);
+			while($row2 = mysqli_fetch_array($publick_workouts))
+			{
+				//print_r($row2);
+				?>
+				<div style='width:220px;height:180px;border:1px solid silver;float:left;margin:30px;'>
+				<div style='width:220px;height:180px;' >
+				<?php
+				$workout  = $row2['WorkoutId'];
+				$getvideos = "SELECT s.VideoID,c.video_thumb_path FROM `workoutvedios` as s,videos as c WHERE WorkoutID =
+							$workout and	c.video_id=s.VideoID limit 4";
+				//echo $getvideos;
+				$result_videos_workout = mysqli_query($db,$getvideos);
+				//echo $getvideos;
+				while($row_videos = mysqli_fetch_array($result_videos_workout))
+				{
+					echo "<img src='".$row_videos['video_thumb_path']."'  border='1' style='width:80px;height:80px;border:1px solid silver' >";
+				}
+				
+				echo "</div>";
+				$workoutid_for_play = $row2['WorkoutId'];
+				//echo "<a style='float:left;text-decoration:none;cursor:pointer;'>Play</a>";
+				?>
+				<a href = '?module=Workouts&task=play_workout&wrkoutid=<?php echo $workoutid_for_play;?>' 
+						style='float:left;text-decoration:none;cursor:pointer;'>Play</a>
+				<div class='span9' style='float:right'>
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown" style='text-align: right;margin:2px;'>
+							<a href="#" class="dropdown-toggle" style='font-size:20px' data-toggle="dropdown"><b>....</b><strong class="caret"></strong></a>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="#">Share</a>
+								</li>	
+								<li>
+									<a href="?module=Workouts&task=search&workoutid=<?php echo $row2['WorkoutId'];?>">Search Similar</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<?php
+				echo "</div>";
+			}
+		?>
+		</div>
+	</div>
+<?php	
+}
+
+
+
+function Workouts_play_workout()
+{
+	if(isset($_GET['wrkoutid']))	
+	{	
+		$id = $_GET['wrkoutid'];
+		$User_id = $_SESSION['User_id'];
+		$db = getdb();
+		
+		$insert_favirets = "INSERT INTO `user_favrits`(`Category`, `userID`, `type_id`) VALUES ('Workout','$User_id','$id')";
+		$insetResult = mysqli_query($db,$insert_favirets);
+		//echo $insert_favirets;
+		if($insetResult == true)
+		{
+			//echo "ok";
+		}
+		else
+		{
+			//echo "no";
+		}
+		$getWorkout = "SELECT WorkoutId, Name, CreatedBy, Access, Description, WorkoutDuration, tags FROM workouts WHERE WorkoutId = $id";
+		$result = mysqli_query($db,$getWorkout);
+		$row = mysqli_fetch_array($result);
+		//print_r($row);
+		?>
+		<div class='span9' style='border: 1px solid rgb(247, 247, 247);background-color: rgb(241, 241, 241);box-shadow: 0px 0px 2px 1px silver;'>
+			<ul class="nav nav-tabs">
+			<li >
+				<a href="?module=Workouts&task=view">All Workouts</a>
+			</li>
+			<li>
+				<a href="?module=Workouts&task=Myworkouts">My Workouts</a>
+			</li>
+			<li>
+				<a href="?module=Workouts&task=my_activities">My Activities</a>
+			</li>
+			<div class="btn-group" style="float:right">
+ 				 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+   				 Action
+    				<span class="caret"></span>
+ 				 </a>
+ 				 <ul class="dropdown-menu">
+  				  <!-- dropdown menu links -->
+  				  <li>
+  				  <a href="?module=Workouts&task=Create">Creat</a>
+  				  </li>
+  				  <li>
+  				  <a href="?module=Workouts&task=user_own_workouts">Add Videos to WO</a>
+  				  </li>
+ 				 </ul>
+			</div>
+		</ul>
+			<div class='span4' style='width:300px;'>
+				<h3><?php echo $row['Name']; ?></h3>
+				Description:<?php echo $row['Description']; ?>
+				<br/>
+				<?php
+				$getWorkout_video = "SELECT a.video_name,a.Desctiption,a.video_path FROM videos as a, workoutvedios as b WHERE a.video_id =
+									b.VideoID and b.WorkoutID = $id";
+					$result_videos = mysqli_query($db,$getWorkout_video);
+					//echo $getWorkout_video;
+					while($video_row = mysqli_fetch_array($result_videos))
+					{
+						//print_r($video_row);
+						echo "name".$video_row['video_name'];
+						echo	"<video width='320' height='240' controls>
+								<source src='".$video_row['video_path']."' type='video/mp4'>
+								</video>";
+					}
+				?>
+			</div>
+		</div>
+		<?php
+	}
+}
+
+
+
+function Workouts_my_activities()
+{
+?>
+	<div class="span9" style='border: 1px solid rgb(247, 247, 247);background-color: rgb(241, 241, 241);box-shadow: 0px 0px 2px 1px silver;'>
+		<ul class="nav nav-tabs">
+			<li >
+				<a href="?module=Workouts&task=view">All Workouts</a>
+			</li>
+			<li>
+				<a href="?module=Workouts&task=Myworkouts">My Workouts</a>
+			</li>
+			<li class="active">
+				<a href="?module=Workouts&task=my_activities">My Activities</a>
+			</li>
+			<div class="btn-group" style="float:right">
+ 				 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+   				 Action
+    				<span class="caret"></span>
+ 				 </a>
+ 				 <ul class="dropdown-menu">
+  				  <!-- dropdown menu links -->
+  				  <li>
+  				  <a href="?module=Workouts&task=Create">Creat</a>
+  				  </li>
+  				  <li>
+  				  <a href="?module=Workouts&task=user_own_workouts">Add Videos to WO</a>
+  				  </li>
+ 				 </ul>
+			</div>
+		</ul>
+		<div>
+			<?php
+			$db = getdb();
+			$User_id = $_SESSION['User_id'];
+			$getWorkouts = "SELECT a.WorkoutId, a.Name, a.Access, a.Description, a.WorkoutDuration, u.Username FROM workouts as a,
+							users as u WHERE a.WorkoutId in (SELECT DISTINCT type_id FROM user_favrits WHERE Category ='Workout'
+							and userID='$User_id') and a.CreatedBy = u.User_id";
+			//echo $getWorkouts;
+			$result = mysqli_query($db,$getWorkouts);
+			while($row = mysqli_fetch_array($result))
+			{
+				//print_r($row);
+				?>
+				<div style = "width:100%; height:250px;border:1px solid silver;">
+				<div style='float:left;'>
+				<h3><?php echo $row['Name'];?></h3>
+				Description:</span><?php echo $row['Description'];?><br/>
+				Duration:</span><?php echo $row['WorkoutDuration'];?><br/>
+				Created by:</span><?php echo $row['Username'];?><br/>
+				<a href = '?module=Workouts&task=play_workout&wrkoutid=<?php echo $row['WorkoutId'];?>'>Play</a>
+				</div>
+				<?php
+					$wrkid = $row['WorkoutId'];
+					$getVideos = "SELECT a.video_name,a.Desctiption,a.video_path,a.video_thumb_path FROM videos as a, 
+								workoutvedios as b WHERE a.video_id = b.VideoID and b.WorkoutID = $wrkid";
+					$videos_result = mysqli_query($db,$getVideos);
+					while($row_video = mysqli_fetch_array($videos_result))
+					{
+						//print_r($row_video);
+						?>
+						<div style='width:100px;height:100px; border:1px solid silver;float:left;background-image: url("<?php echo $row_video['video_thumb_path']; ?>");background-size: 100%;'>
+						</div>
+						<?php
+					}
+				?>
+				</div>
+				<?php
+			}
+			?>
+		</div>
+	</div>
+<?php	
+}
+
+function Workouts_user_own_workouts() {
+?>
+		<div class='span9'>
+					<div>
+						<a class='btn' href="?module=Workouts&task=Create">Create Workout</a>
+						</br>
+						<!-- list of workouts -->
+						<?php
+							$db = getdb();
+							$user_id_val = $_SESSION['User_id'];
+							$query = "select s.WorkoutId,s.Name,c.Username,s.Access,s.Description,s.WorkoutDuration from workouts as s,users as c where s.CreatedBy = c.user_id and s.CreatedBy = '$user_id_val'";
+							$result = mysqli_query($db,$query);
+							//print_r($result);
+								?>
+								<table class="table table-hover table-bordered">
+								<thead>
+									<tr>
+									<th>
+									Name
+									</th>
+									<th>
+									Created By
+									</th>
+									<th>
+									Access
+									</th>
+									<th>
+									View
+									</th>
+									<th>
+									Duration
+									</th>
+									<th>
+									Add Videos
+									</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?php
+							while($row = mysqli_fetch_array($result))
+							{
+								?>
+								<tr>
+									<td><?php	echo $row['Name']; ?></td>
+									<td><?php	echo $row['Username']; ?></td>
+									<td><?php	echo $row['Access']; ?></td>
+									<td><?php	echo $row['WorkoutDuration']; ?></td>
+									<td><a class='btn' href='?module=Workouts&task=view_byid&jobID=<?php echo $row['WorkoutId'];?>'>View</a></td>
+									<td><a class='btn' href='?module=Workouts&task=view_byid&jobID=<?php echo $row['WorkoutId'];?>'>Add video</a></td>
+								</tr>
+								<?php
+							}
+						?>
+						</tbody>
+						</table>
+					</div>
+					</div>
+<?php
+}
